@@ -1,0 +1,21 @@
+{
+    "name": "nexophp/router",
+    "type": "library",
+    "description": "路由",
+    "keywords": ["php"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+           "name": "sunkangchina",
+           "email":"68103403@qq.com"
+        }
+    ],
+    "require": { 
+    }, 
+    "autoload": { 
+        "files": [ 
+            "./IRouteBase.php",
+            "./IRoute.php"
+        ]
+    }
+}
