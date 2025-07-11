@@ -1,5 +1,5 @@
 {
-    "name": "nexophp/router",
+    "name": "nexophp/route",
     "type": "library",
     "description": "路由",
     "keywords": ["php"],
