@@ -5,7 +5,7 @@
 ## 安装
 
 ~~~
-composer require nexophp/router
+composer require nexophp/route
 ~~~
 
 路由加载优先级 `core` > `app` > `modules`
