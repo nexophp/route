@@ -277,7 +277,7 @@ class Route
     /**
      * 处理对象
      */
-    public static function do_object($res) {}
+    public static function doObject($res) {}
     /**
      * uri
      */
@@ -672,7 +672,7 @@ class Route
         } elseif (is_string($res)) {
             echo $res;
         } elseif (is_object($res)) {
-            return static::do_object($res);
+            return static::doObject($res);
         }
     }
     /**
