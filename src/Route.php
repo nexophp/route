@@ -4,32 +4,31 @@
  * 路由
  * @since 2014
  */
-
 class Route
 {
     public static $pre = '';
-    //基础URL
+    // 基础URL
     public $base_url;
     protected $method;
     public static $router;
     public $match = '/<(\w+):([^>]+)?>/';
     public static $app = [];
-    //相对URL
+    // 相对URL
     public static $index;
     /**
      * 默认路由模块namespace为module
      */
     public static $r = ['core', 'app', 'modules'];
-    //当前正则的URL 如 aa
+    // 当前正则的URL 如 aa
     protected $_url;
-    //当前URL的function 如 function(){}
+    // 当前URL的function 如 function(){}
     protected $_value;
     public $host;
     public $class = [];
     public static $obj;
-    //当前使用的CLASS
+    // 当前使用的CLASS
     public static $current_class;
-    //当前域名　
+    // 当前域名
     public static $current_domain;
     public static $err;
     public static $status;
@@ -39,6 +38,215 @@ class Route
      * ucfirst
      */
     public static $controller_name = 'strtolower';
+    /**
+     * 支持的语言代码
+     */
+    public static $supported_languages = [
+        'ab',
+        'aa',
+        'af',
+        'ak',
+        'sq',
+        'am',
+        'ar',
+        'an',
+        'hy',
+        'as',
+        'av',
+        'ae',
+        'ay',
+        'az',
+        'bm',
+        'ba',
+        'eu',
+        'be',
+        'bn',
+        'bh',
+        'bi',
+        'bs',
+        'br',
+        'bg',
+        'my',
+        'ca',
+        'ch',
+        'ce',
+        'ny',
+        'zh',
+        'zh-cn',
+        'zh-tw',
+        'zh-hk',
+        'zh-sg',
+        'cv',
+        'kw',
+        'co',
+        'cr',
+        'hr',
+        'cs',
+        'da',
+        'dv',
+        'nl',
+        'dz',
+        'en',
+        'en-us',
+        'en-gb',
+        'en-au',
+        'en-ca',
+        'en-in',
+        'eo',
+        'et',
+        'ee',
+        'fo',
+        'fj',
+        'fi',
+        'fr',
+        'fr-fr',
+        'fr-ca',
+        'fr-be',
+        'fr-ch',
+        'ff',
+        'gl',
+        'ka',
+        'de',
+        'de-de',
+        'de-at',
+        'de-ch',
+        'el',
+        'gn',
+        'gu',
+        'ht',
+        'ha',
+        'he',
+        'hz',
+        'hi',
+        'ho',
+        'hu',
+        'is',
+        'io',
+        'ig',
+        'id',
+        'ia',
+        'ie',
+        'iu',
+        'ik',
+        'ga',
+        'it',
+        'ja',
+        'jv',
+        'kl',
+        'kn',
+        'kr',
+        'ks',
+        'kk',
+        'km',
+        'ki',
+        'rw',
+        'ky',
+        'kv',
+        'kg',
+        'ko',
+        'ku',
+        'kj',
+        'la',
+        'lb',
+        'lg',
+        'li',
+        'ln',
+        'lo',
+        'lt',
+        'lu',
+        'lv',
+        'gv',
+        'mk',
+        'mg',
+        'ms',
+        'ml',
+        'mt',
+        'mi',
+        'mr',
+        'mh',
+        'mn',
+        'na',
+        'nv',
+        'nd',
+        'ne',
+        'ng',
+        'nb',
+        'nn',
+        'no',
+        'nr',
+        'oc',
+        'oj',
+        'cu',
+        'om',
+        'or',
+        'os',
+        'pa',
+        'pi',
+        'fa',
+        'pl',
+        'ps',
+        'pt',
+        'pt-br',
+        'pt-pt',
+        'qu',
+        'rm',
+        'rn',
+        'ro',
+        'ru',
+        'sa',
+        'sc',
+        'sd',
+        'se',
+        'sm',
+        'sg',
+        'sr',
+        'gd',
+        'sn',
+        'si',
+        'sk',
+        'sl',
+        'so',
+        'st',
+        'es',
+        'es-es',
+        'es-mx',
+        'es-ar',
+        'su',
+        'sw',
+        'ss',
+        'sv',
+        'ta',
+        'te',
+        'tg',
+        'th',
+        'ti',
+        'bo',
+        'tk',
+        'tl',
+        'tn',
+        'to',
+        'tr',
+        'ts',
+        'tt',
+        'tw',
+        'ty',
+        'ug',
+        'uk',
+        'ur',
+        'uz',
+        've',
+        'vi',
+        'vo',
+        'wa',
+        'cy',
+        'wo',
+        'fy',
+        'xh',
+        'yi',
+        'yo',
+        'za',
+        'zu',
+    ];
     /**
      * 初始化
      */
@@ -61,7 +269,7 @@ class Route
             $ok();
         } else {
             if ($err) {
-                //未找到路由
+                // 未找到路由
                 $not_find();
             }
         }
@@ -82,11 +290,11 @@ class Route
         return $uri;
     }
     /**
-     *内部函数
+     * 内部函数
      */
     public static function _uri()
     {
-        //解析URL $uri 返回 /app/public/ 或 /
+        // 解析URL $uri 返回 /app/public/ 或 /
         $uri = $_SERVER['REQUEST_URI'];
         $uri = str_replace("//", '/', $uri);
         if (self::$pre) {
@@ -102,7 +310,7 @@ class Route
      */
     public function __construct()
     {
-        //请求方式 GET POST
+        // 请求方式 GET POST
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->host = static::host();
     }
@@ -110,7 +318,7 @@ class Route
      * server_name
      * @return
      */
-    public static function server_name()
+    public static function getServerName()
     {
         return $_SERVER['SERVER_NAME'];
     }
@@ -126,7 +334,7 @@ class Route
         } elseif (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 1 || $_SERVER['HTTPS'] == 'on')) {
             $top = 'https';
         }
-        return $top . "://" . static::server_name();
+        return $top . "://" . static::getServerName();
     }
     /**
      * domain路由
@@ -137,7 +345,7 @@ class Route
      */
     public static function domain($domain, $fun)
     {
-        if ($domain != static::server_name()) {
+        if ($domain != static::getServerName()) {
             return;
         }
         call_user_func($fun);
@@ -148,28 +356,36 @@ class Route
      * [module] => admin
      * [package] => core
      * [controller] => site
+     * [lang] => zh-cn (if present)
      */
-    public static function get_action()
+    public static function getActions()
     {
         $ar = static::init()->class;
         $id = str_replace('\\', '/', $ar[0]);
         $arr = explode("/", $id);
         $action = $ar[1];
         $action = strtolower($action);
-        $vo['action'] = $action;
-        $vo['package'] = $arr[0];
-        $vo['module'] = $arr[1];
+        if (strpos($action, '-') !== false) {
+            $action = static::toCamelCase($action);
+        }
+        $output['action'] = $action;
+        $output['package'] = $arr[0];
+        $output['module'] = $arr[1];
         $controller_name = strtolower($arr[3]);
         $controller_name = str_replace("controller", "", $controller_name);
-        $vo['controller'] = $controller_name;
-        return $vo;
+        $output['controller'] = $controller_name;
+        $uri = static::_uri();
+        $uri_parts = explode('/', trim($uri, '/'));
+        if (!empty($uri_parts) && in_array($uri_parts[0], static::$supported_languages)) {
+            $output['lang'] = $uri_parts[0];
+        }
+        return $output;
     }
     /**
      * 对GET POST all 设置router
      */
-    protected function set_router($url, $do, $method = 'GET', $name = null)
+    protected function setRoute($url, $do, $method = 'GET', $name = null)
     {
-
         if (is_string($do)) {
             $do = str_replace("/", "\\", $do);
             if (!$name && strpos($do, '@') !== false) {
@@ -188,7 +404,7 @@ class Route
             }
             $i = 0;
             foreach ($arr as $v) {
-                $this->set_router($v, $do, $method, $names[$i] ?? '');
+                $this->setRoute($v, $do, $method, $names[$i] ?? '');
                 $i++;
             }
             return;
@@ -206,12 +422,12 @@ class Route
     /** * 生成URL */
     public static function url($url, $par = [])
     {
-        return static::init()->create_url($url, $par);
+        return static::init()->createUrl($url, $par);
     }
     /**
      * 生成URL
      */
-    protected function create_url($url, $par = [])
+    protected function createUrl($url, $par = [])
     {
         $url = str_replace('.', '/', $url);
         $id = 'route_url' . $url . json_encode($par);
@@ -258,43 +474,41 @@ class Route
         static::$app[$id] = $url;
         return $url;
     }
-
     /**
      * get request
      */
     public static function get($url, $do, $name = null)
     {
-        static::init()->set_router($url, $do, 'GET', $name);
+        static::init()->setRoute($url, $do, 'GET', $name);
     }
-
     /**
      * post request
      */
     public static function post($url, $do, $name = null)
     {
-        static::init()->set_router($url, $do, 'POST', $name);
+        static::init()->setRoute($url, $do, 'POST', $name);
     }
     /**
      * put request
      */
     public static function put($url, $do, $name = null)
     {
-        static::init()->set_router($url, $do, 'PUT', $name);
+        static::init()->setRoute($url, $do, 'PUT', $name);
     }
     /**
-     * put request
+     * delete request
      */
     public static function delete($url, $do, $name = null)
     {
-        static::init()->set_router($url, $do, 'DELETE', $name);
+        static::init()->setRoute($url, $do, 'DELETE', $name);
     }
     /**
      * get/post request
      */
     public static function all($url, $do, $name = null)
     {
-        static::init()->set_router($url, $do, 'POST', $name);
-        static::init()->set_router($url, $do, 'GET', $name);
+        static::init()->setRoute($url, $do, 'POST', $name);
+        static::init()->setRoute($url, $do, 'GET', $name);
     }
     /**
      * 执行路由
@@ -308,13 +522,20 @@ class Route
      */
     protected function exec()
     {
-        //解析URL $uri 返回 /app/public/ 或 /
+        // 解析URL $uri 返回 /app/public/ 或 /
         $uri = static::_uri();
-        //取得入口路径
-        $index = static::server_name();
+        // 取得入口路径
+        $index = static::getServerName();
         $index = substr($index, 0, strrpos($index, '/'));
         $action = substr($uri, strlen($index));
         $this->base_url = $index ? $index . '/' : '/';
+
+        $uri_parts = explode('/', trim($action, '/'));
+        $lang = null;
+        if (!empty($uri_parts) && in_array($uri_parts[0], static::$supported_languages)) {
+            $lang = array_shift($uri_parts);
+            $action = '/' . implode('/', $uri_parts);
+        }
         /**
          * 对于未使用正则的路由匹配到直接goto
          */
@@ -332,7 +553,7 @@ class Route
         }
         foreach (static::$router[$this->method] as $pre => $class) {
             if (preg_match_all($this->match, $pre, $out)) {
-                //转成正则
+                // 转成正则
                 foreach ($out[0] as $k => $v) {
                     $pre = str_replace($v, "(" . $out[2][$k] . ")", $pre);
                 }
@@ -348,8 +569,8 @@ class Route
                 $class = $par['class'];
                 if (preg_match($p, $action, $new)) {
                     unset($new[0]);
-                    //根据请求设置值 $_POST $_GET
-                    $data = $this->set_request_value($this->array_combine($par['par'], $new));
+                    // 根据请求设置值 $_POST $_GET
+                    $data = $this->setRequestData($this->arrayCombine($par['par'], $new));
                     $this->_url = $pre;
                     $this->_value = $class;
                     goto TODO;
@@ -373,9 +594,9 @@ class Route
                 }
             }
             $ac = $cls[1];
-            return $this->load_route($class, $ac, $data);
+            return $this->loadRoute($class, $ac, $data);
         }
-        //加载app\admin\login.php 这类的自动router
+        // 加载app\admin\login.php 这类的自动router
         $action = trim(str_replace('/', ' ', $action));
         $a = explode(' ', $action);
         $classes = [];
@@ -389,12 +610,12 @@ class Route
             }
         }
         if (isset($a[2]) && $a[2]) {
-            $ac = $a[2];
+            $ac = static::toCamelCase($a[2]);
         } else {
             $ac = 'index';
         }
         foreach ($classes as $class) {
-            $res = $this->load_route($class, $ac, $data);
+            $res = $this->loadRoute($class, $ac, $data);
             if ($res !== false) {
                 self::$status = 'ok';
                 return $res;
@@ -402,16 +623,9 @@ class Route
         }
     }
     /**
-     * 建议内部使用
-     */
-    public static function get_class()
-    {
-        return static::$current_class;
-    }
-    /**
      * 内部函数，支持框架内部框架
      */
-    protected function load_route($class, $ac, $data)
+    protected function loadRoute($class, $ac, $data)
     {
         $a = substr($class, 0, strrpos($class, '\\'));
         $b = substr($class, strrpos($class, '\\') + 1);
@@ -462,9 +676,9 @@ class Route
         }
     }
     /**
-     * 内部函数 ，对array_combine优化
+     * 内部函数 ，对arrayCombine优化
      */
-    protected function array_combine($a = [], $b = [])
+    protected function arrayCombine($a = [], $b = [])
     {
         $i = 0;
         foreach ($b as $v) {
@@ -476,7 +690,7 @@ class Route
     /**
      * 内部函数 ,根据请求设置值
      */
-    protected function set_request_value($data)
+    protected function setRequestData($data)
     {
         switch ($this->method) {
             case 'GET':
@@ -497,5 +711,15 @@ class Route
         $url = strtolower($url);
         $url = ltrim($url, '-');
         return $url;
+    }
+    /**
+     * 转换为驼峰格式
+     */
+    public static function toCamelCase($string)
+    {
+        $string = str_replace('-', ' ', $string);
+        $string = ucwords($string);
+        $string = str_replace(' ', '', $string);
+        return $string;
     }
 }
