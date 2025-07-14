@@ -83,16 +83,9 @@ $model = $this->model;
 ## 生成URL
 
 ~~~
-Router::create_url($url,$par = []);
+Router::url($url,$par = []);
 ~~~
-
-## 控制器名称
-
-默认全小写，如需改成首字母大写
-
-~~~
-Router::$controller_name = 'ucfirst';
-~~~
+ 
 
 ## 更多规则
 
