@@ -262,10 +262,10 @@ class Route
      */
     public static function do($ok = null, $not_find = null)
     {
-        $IRoute = Route::run();
+        $run = Route::run();
         $err = Route::$err;
         if (self::$status == 'ok') {
-            echo $IRoute;
+            echo $run;
             $ok();
         } else {
             if ($err) {
