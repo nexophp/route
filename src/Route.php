@@ -262,10 +262,10 @@ class Route
      */
     public static function do($ok = null, $not_find = null)
     {
-        $run = Route::run();
+        $IRoute = Route::run();
         $err = Route::$err;
         if (self::$status == 'ok') {
-            echo $run;
+            echo $IRoute;
             $ok();
         } else {
             if ($err) {
@@ -277,7 +277,7 @@ class Route
     /**
      * 处理对象
      */
-    public static function doObject($res) {}
+    public static function do_object($res) {}
     /**
      * uri
      */
@@ -471,6 +471,10 @@ class Route
         }
         $url = $this->base_url . $r;
         $url = str_replace("//", '/', $url);
+        $lang = self::getActions()['lang'] ?? '';
+        if ($lang) {
+            $url = '/' . $lang . $url;
+        }
         static::$app[$id] = $url;
         return $url;
     }
@@ -672,7 +676,7 @@ class Route
         } elseif (is_string($res)) {
             echo $res;
         } elseif (is_object($res)) {
-            return static::doObject($res);
+            return static::do_object($res);
         }
     }
     /**
