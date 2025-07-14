@@ -474,6 +474,11 @@ class Route
         $lang = self::getActions()['lang'] ?? '';
         if ($lang) {
             $url = '/' . $lang . $url;
+        } else if (function_exists('cookie')) {
+            $lang = cookie('lang');
+            if ($lang) {
+                $url = '/' . $lang . $url;
+            }
         }
         static::$app[$id] = $url;
         return $url;
