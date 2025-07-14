@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 路由
+ * Route
  * @since 2014
  */
 class Route
