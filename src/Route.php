@@ -262,8 +262,8 @@ class Route
      */
     public static function do($ok = null, $not_find = null)
     {
-        $IRoute = IRoute::run();
-        $err = IRoute::$err;
+        $IRoute = Route::run();
+        $err = Route::$err;
         if (self::$status == 'ok') {
             echo $IRoute;
             $ok();
@@ -629,7 +629,7 @@ class Route
     {
         $a = substr($class, 0, strrpos($class, '\\'));
         $b = substr($class, strrpos($class, '\\') + 1);
-        $fun = IRoute::$controller_name;
+        $fun = Route::$controller_name;
         $b = $fun($b);
         $b = ucfirst($b);
         $class = $a . "\\" . $b . 'Controller';
