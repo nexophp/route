@@ -5,7 +5,7 @@
  * @since 2014
  */
 
-class IRouteBase
+class Route
 {
     public static $pre = '';
     //基础URL
@@ -17,7 +17,7 @@ class IRouteBase
     //相对URL
     public static $index;
     /**
-     *默认路由模块namespace为module
+     * 默认路由模块namespace为module
      */
     public static $r = ['core', 'app', 'modules'];
     //当前正则的URL 如 aa
@@ -154,10 +154,14 @@ class IRouteBase
         $ar = static::init()->class;
         $id = str_replace('\\', '/', $ar[0]);
         $arr = explode("/", $id);
-        $vo['action'] = $ar[1];
+        $action = $ar[1];
+        $action = strtolower($action);
+        $vo['action'] = $action;
         $vo['package'] = $arr[0];
         $vo['module'] = $arr[1];
-        $vo['controller'] = strtolower($arr[3]);
+        $controller_name = strtolower($arr[3]);
+        $controller_name = str_replace("controller", "", $controller_name);
+        $vo['controller'] = $controller_name;
         return $vo;
     }
     /**
@@ -413,7 +417,9 @@ class IRouteBase
         $b = substr($class, strrpos($class, '\\') + 1);
         $fun = IRoute::$controller_name;
         $b = $fun($b);
-        $class = $a . "\\" . $b;
+        $b = ucfirst($b);
+        $class = $a . "\\" . $b . 'Controller';
+        $ac = ucfirst($ac);
         $this->class = [$class, $ac];
         static::$current_class = $class;
         if (!class_exists($class)) {
@@ -425,15 +431,15 @@ class IRouteBase
             $obj->before();
         }
         $res = '';
-        if (method_exists($class, "action_" . $ac)) {
-            $action = "action_" . $ac;
+        if (method_exists($class, "action" . $ac)) {
+            $action = "action" . $ac;
             $res = $obj->$action();
             self::$err = [];
             if ($res) {
                 return $this->output($res);
             }
         } else {
-            self::$err[] = "action 【action_" . $ac . "】 not exists ";
+            self::$err[] = "action 【action" . $ac . "】 not exists ";
             return false;
         }
         if (method_exists($class, 'after')) {
@@ -481,5 +487,15 @@ class IRouteBase
                 break;
         }
         return $data;
+    }
+    /**
+     * 驼峰字符串转换为URL友好格式
+     */
+    public static function toUrlFriendly($string)
+    {
+        $url = preg_replace('/([A-Z])/', '-$1', $string);
+        $url = strtolower($url);
+        $url = ltrim($url, '-');
+        return $url;
     }
 }

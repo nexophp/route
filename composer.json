@@ -13,9 +13,8 @@
     "require": { 
     }, 
     "autoload": { 
-        "files": [ 
-            "./IRouteBase.php",
-            "./IRoute.php"
+        "files": [  
+            "./src/Route.php"
         ]
     }
 }
