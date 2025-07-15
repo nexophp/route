@@ -18,7 +18,7 @@ class Route
     /**
      * 默认路由模块namespace为module
      */
-    public static $r = ['core', 'app', 'modules'];
+    public static $r = ['app', 'modules'];
     // 当前正则的URL 如 aa
     protected $_url;
     // 当前URL的function 如 function(){}
