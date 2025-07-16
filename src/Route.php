@@ -733,14 +733,18 @@ class Route
     /**
      * 执行控制器
      */
-    public static function runController($class,$method){
-        $obj = self::init(); 
-        if(substr($class,-10) == 'Controller'){
-            $class = substr($class,0,-10);
-        } 
-        if(substr($method,0,6) == 'action'){
-            $method = substr($method,6);
-        } 
-        return $obj->loadRoute($class, $method,[]);
+    public static function runController($class, $method)
+    {
+        $obj = self::init();
+        if (substr($class, 0, 1) == '\\') {
+            $class = substr($class, 1);
+        }
+        if (substr($class, -10) == 'Controller') {
+            $class = substr($class, 0, -10);
+        }
+        if (substr($method, 0, 6) == 'action') {
+            $method = substr($method, 6);
+        }
+        return $obj->loadRoute($class, $method, []);
     }
 }
