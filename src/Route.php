@@ -730,4 +730,17 @@ class Route
         $string = str_replace(' ', '', $string);
         return $string;
     }
+    /**
+     * 执行控制器
+     */
+    public static function runController($class,$method){
+        $obj = self::init(); 
+        if(substr($class,-10) == 'Controller'){
+            $class = substr($class,0,-10);
+        } 
+        if(substr($method,0,6) == 'action'){
+            $method = substr($method,6);
+        } 
+        return $obj->loadRoute($class, $method,[]);
+    }
 }
