@@ -275,10 +275,6 @@ class Route
         }
     }
     /**
-     * 处理对象
-     */
-    public static function do_object($res) {}
-    /**
      * uri
      */
     public static function uri()
@@ -435,41 +431,41 @@ class Route
             return static::$app[$id];
         }
         if (isset(static::$router['__#named#__'][$url])) {
-            $r = static::$router['__#named#__'][$url];
-            preg_match_all($this->match, $r, $out);
-            $a = $out[0];
-            $b = $out[1];
+            $str = static::$router['__#named#__'][$url];
+            preg_match_all($this->match, $str, $out);
+            $first = $out[0];
+            $sec = $out[1];
         } else {
-            $a = array();
-            $b = array();
+            $first = array();
+            $sec = array();
         }
-        if ($b) {
+        if ($sec) {
             $i = 0;
-            foreach ($b as $v) {
-                if (isset($a[$i]) && isset($par[$v])) {
-                    $r = str_replace($a[$i], $par[$v], $r);
+            foreach ($sec as $v) {
+                if (isset($first[$i]) && isset($par[$v])) {
+                    $str = str_replace($first[$i], $par[$v], $str);
                     unset($par[$v]);
                 }
                 $i++;
             }
         }
-        if (isset($r) && $r == '/') {
+        if (isset($str) && $str == '/') {
             goto GT;
         }
-        if (isset($r) && substr($r, 0, 2) == '#^') {
-            $r = substr($r, 4, -2);
+        if (isset($str) && substr($str, 0, 2) == '#^') {
+            $str = substr($str, 4, -2);
         }
-        if (isset($r) && substr($r, -1) == '/') {
-            $r = substr($r, 0, -1);
+        if (isset($str) && substr($str, -1) == '/') {
+            $str = substr($str, 0, -1);
         }
-        if (!isset($r) || !$r) {
-            $r = $url;
+        if (!isset($str) || !$str) {
+            $str = $url;
         }
         GT:
         if ($par) {
-            $r = $r . "?" . http_build_query($par);
+            $str = $str . "?" . http_build_query($par);
         }
-        $url = $this->base_url . $r;
+        $url = $this->base_url . $str;
         $url = str_replace("//", '/', $url);
         $lang = self::getActions()['lang'] ?? '';
         if ($lang) {
@@ -634,16 +630,16 @@ class Route
     /**
      * 内部函数，支持框架内部框架
      */
-    protected function loadRoute($class, $ac, $data)
+    protected function loadRoute($class, $method, $data)
     {
-        $a = substr($class, 0, strrpos($class, '\\'));
-        $b = substr($class, strrpos($class, '\\') + 1);
+        $first = substr($class, 0, strrpos($class, '\\'));
+        $next = substr($class, strrpos($class, '\\') + 1);
         $fun = Route::$controller_name;
-        $b = $fun($b);
-        $b = ucfirst($b);
-        $class = $a . "\\" . $b . 'Controller';
-        $ac = ucfirst($ac);
-        $this->class = [$class, $ac];
+        $next = $fun($next);
+        $next = ucfirst($next);
+        $class = $first . "\\" . $next . 'Controller';
+        $method = ucfirst($method);
+        $this->class = [$class, $method];
         static::$current_class = $class;
         if (!class_exists($class)) {
             self::$err[] = "class 【" . $class . "】 not exists ";
@@ -654,20 +650,21 @@ class Route
             $obj->before();
         }
         $res = '';
-        if (method_exists($class, "action" . $ac)) {
-            $action = "action" . $ac;
+        if (method_exists($class, "action" . $method)) {
+            $action = "action" . $method;
             $res = $obj->$action();
+            if (method_exists($class, 'after')) {
+                $obj->after($res);
+            }
             self::$err = [];
             if ($res) {
                 return $this->output($res);
             }
         } else {
-            self::$err[] = "action 【action" . $ac . "】 not exists ";
+            self::$err[] = "action 【action" . $method . "】 not exists ";
             return false;
         }
-        if (method_exists($class, 'after')) {
-            $obj->after();
-        }
+        
     }
     /**
      * 输出
@@ -680,18 +677,16 @@ class Route
             exit;
         } elseif (is_string($res)) {
             echo $res;
-        } elseif (is_object($res)) {
-            return static::do_object($res);
         }
     }
     /**
      * 内部函数 ，对arrayCombine优化
      */
-    protected function arrayCombine($a = [], $b = [])
+    protected function arrayCombine($first = [], $next = [])
     {
         $i = 0;
-        foreach ($b as $v) {
-            $out[$a[$i]] = $v;
+        foreach ($next as $v) {
+            $out[$first[$i]] = $v;
             $i++;
         }
         return $out;
