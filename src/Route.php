@@ -6,6 +6,7 @@
  */
 class Route
 {
+    public static $default_controller = 'site';
     public static $pre = '';
     // 基础URL
     public $base_url;
@@ -18,7 +19,7 @@ class Route
     /**
      * 默认路由模块namespace为module
      */
-    public static $r = ['app', 'modules'];
+    public static $searchApps = ['app', 'modules'];
     // 当前正则的URL 如 aa
     protected $_url;
     // 当前URL的function 如 function(){}
@@ -603,24 +604,27 @@ class Route
         }
         // 加载app\admin\login.php 这类的自动router
         $action = trim(str_replace('/', ' ', $action));
-        $a = explode(' ', $action);
+        $arr = explode(' ', $action);
         $classes = [];
-        if (isset($a[0])) {
-            foreach (static::$r as $r) {
-                $class = $r . "\\" . $a[0];
-                if (isset($a[1])) {
-                    $class = $class . "\\controller\\" . $a[1];
+       
+        if (isset($arr[0])) { 
+            foreach (static::$searchApps as $r) {
+                $class = $r . "\\" . $arr[0];
+                if (isset($arr[1])) {
+                    $class = $class . "\\controller\\" . $arr[1];
+                }else{
+                    $class = $class . "\\controller\\".static::$default_controller;
                 }
                 $classes[] = $class;
             }
         }
-        if (isset($a[2]) && $a[2]) {
-            $ac = static::toCamelCase($a[2]);
+        if (isset($arr[2]) && $arr[2]) {
+            $method = static::toCamelCase($arr[2]);
         } else {
-            $ac = 'index';
+            $method = 'index';
         }
         foreach ($classes as $class) {
-            $res = $this->loadRoute($class, $ac, $data);
+            $res = $this->loadRoute($class, $method, $data);
             if ($res !== false) {
                 self::$status = 'ok';
                 return $res;
@@ -637,7 +641,7 @@ class Route
         $fun = Route::$controller_name;
         $next = $fun($next);
         $next = ucfirst($next);
-        $class = $first . "\\" . $next . 'Controller';
+        $class = $first . "\\" . $next . 'Controller'; 
         $method = ucfirst($method);
         $this->class = [$class, $method];
         static::$current_class = $class;
