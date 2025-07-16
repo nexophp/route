@@ -8,7 +8,7 @@
 composer require nexophp/route
 ~~~
 
-路由加载优先级 `core` > `app` > `modules`
+路由加载优先级  `app` > `modules`
 
 ## rewrite
 
