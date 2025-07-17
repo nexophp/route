@@ -642,6 +642,9 @@ class Route
         $next = $fun($next);
         $next = ucfirst($next);
         $class = $first . "\\" . $next . 'Controller'; 
+        if (strpos($next, '-') !== false) {
+            $next = static::toCamelCase($next);
+        }
         $method = ucfirst($method);
         $this->class = [$class, $method];
         static::$current_class = $class;
