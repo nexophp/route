@@ -2,8 +2,13 @@
 
 /**
  * Route
+ * @author sunkangchina <68103403@qq.com>
+ * @license MIT <https://mit-license.org/>
+ * @date 2025
  * @since 2014
  */
+
+
 class Route
 {
     public static $default_controller = 'site';
@@ -606,14 +611,14 @@ class Route
         $action = trim(str_replace('/', ' ', $action));
         $arr = explode(' ', $action);
         $classes = [];
-       
-        if (isset($arr[0])) { 
+
+        if (isset($arr[0])) {
             foreach (static::$searchApps as $r) {
                 $class = $r . "\\" . $arr[0];
                 if (isset($arr[1])) {
                     $class = $class . "\\controller\\" . $arr[1];
-                }else{
-                    $class = $class . "\\controller\\".static::$default_controller;
+                } else {
+                    $class = $class . "\\controller\\" . static::$default_controller;
                 }
                 $classes[] = $class;
             }
@@ -641,7 +646,7 @@ class Route
         $fun = Route::$controller_name;
         $next = $fun($next);
         $next = ucfirst($next);
-        $class = $first . "\\" . $next . 'Controller'; 
+        $class = $first . "\\" . $next . 'Controller';
         if (strpos($next, '-') !== false) {
             $next = static::toCamelCase($next);
         }
@@ -671,7 +676,6 @@ class Route
             self::$err[] = "action 【action" . $method . "】 not exists ";
             return false;
         }
-        
     }
     /**
      * 输出
