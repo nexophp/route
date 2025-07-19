@@ -373,9 +373,9 @@ class Route
         $output['action'] = $action;
         $output['package'] = $arr[0];
         $output['module'] = $arr[1];
-        $controller_name = strtolower($arr[3]);
-        $controller_name = str_replace("controller", "", $controller_name);
-        $output['controller'] = $controller_name;
+        $controller_name = $arr[3];
+        $controller_name = str_replace("Controller", "", $controller_name);
+        $output['controller'] = self::toUrlFriendly($controller_name);
         $uri = static::_uri();
         $uri_parts = explode('/', trim($uri, '/'));
         if (!empty($uri_parts) && in_array($uri_parts[0], static::$supported_languages)) {
