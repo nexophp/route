@@ -371,7 +371,6 @@ class Route
             $action = static::toCamelCase($action);
         }
         $output['action'] = $action;
-        $output['package'] = $arr[0];
         $output['module'] = $arr[1];
         $controller_name = $arr[3];
         $controller_name = str_replace("Controller", "", $controller_name);
@@ -382,6 +381,18 @@ class Route
             $output['lang'] = $uri_parts[0];
         }
         return $output;
+    }
+    /**
+     * 取得控制器的 model id action
+     */
+    public static function getActionString()
+    {
+        $arr = self::getActions();
+        $str = '';
+        $str .= $arr['module'] . '/';
+        $str .= $arr['controller'] . '/';
+        $str .= $arr['action'];
+        return $str;
     }
     /**
      * 对GET POST all 设置router
