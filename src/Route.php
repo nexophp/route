@@ -365,11 +365,8 @@ class Route
         $ar = static::init()->class;
         $id = str_replace('\\', '/', $ar[0]);
         $arr = explode("/", $id);
-        $action = $ar[1];
-        $action = strtolower($action);
-        if (strpos($action, '-') !== false) {
-            $action = static::toCamelCase($action);
-        }
+        $action = $ar[1];  
+        $action = static::toUrlFriendly($action); 
         $output['action'] = $action;
         $output['module'] = $arr[1];
         $controller_name = $arr[3];
@@ -388,6 +385,7 @@ class Route
     public static function getActionString()
     {
         $arr = self::getActions();
+        pr($arr);exit;
         $str = '';
         $str .= $arr['module'] . '/';
         $str .= $arr['controller'] . '/';
