@@ -384,8 +384,7 @@ class Route
      */
     public static function getActionString()
     {
-        $arr = self::getActions();
-        pr($arr);exit;
+        $arr = self::getActions(); 
         $str = '';
         $str .= $arr['module'] . '/';
         $str .= $arr['controller'] . '/';
