@@ -107,18 +107,13 @@ Route::domain('user2.api.com',function(){
 		echo 'test';		
 	});
 });
-Route::get('post/<id:\d+>|post',function(){    
-},'@post');
-Route::get('post/<id:\d+>|post',function(){    
-},'@post|$po');
 ~~~
 
 ## composer 
 
 ~~~
 "autoload": {
-    "psr-4": {
-        "core\\": "core",
+    "psr-4": { 
         "app\\": "app",
         "modules\\": "modules"
     }

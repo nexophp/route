@@ -365,8 +365,8 @@ class Route
         $ar = static::init()->class;
         $id = str_replace('\\', '/', $ar[0]);
         $arr = explode("/", $id);
-        $action = $ar[1];  
-        $action = static::toUrlFriendly($action); 
+        $action = $ar[1];
+        $action = static::toUrlFriendly($action);
         $output['action'] = $action;
         $output['module'] = $arr[1];
         $controller_name = $arr[3];
@@ -384,7 +384,7 @@ class Route
      */
     public static function getActionString()
     {
-        $arr = self::getActions(); 
+        $arr = self::getActions();
         $str = '';
         $str .= $arr['module'] . '/';
         $str .= $arr['controller'] . '/';
@@ -405,20 +405,6 @@ class Route
                 $name = str_replace("@", "/", $name);
             }
         }
-        if (strpos($url, '|') !== false) {
-            $arr = explode('|', $url);
-            if (strpos($name, '|') !== false) {
-                $names = explode('|', $name);
-            } else {
-                $names[0] = $name;
-            }
-            $i = 0;
-            foreach ($arr as $v) {
-                $this->setRoute($v, $do, $method, $names[$i] ?? '');
-                $i++;
-            }
-            return;
-        }
         if (strpos($url, '<') !== false) {
             $url = "#^\/{$url}\$#";
         } elseif (substr($url, 0, 1) != '/') {
@@ -426,7 +412,15 @@ class Route
         }
         static::$router[$method][$url] = $do;
         if ($name) {
-            static::$router['__#named#__'][$name] = $url;
+            // 支持多个同名路由，存储为数组
+            if (!isset(static::$router['__#named#__'][$name])) {
+                static::$router['__#named#__'][$name] = [];
+            }
+            if (!is_array(static::$router['__#named#__'][$name])) {
+                // 如果已存在但不是数组，转换为数组
+                static::$router['__#named#__'][$name] = [static::$router['__#named#__'][$name]];
+            }
+            static::$router['__#named#__'][$name][] = $url;
         }
     }
     /** * 生成URL */
@@ -445,7 +439,35 @@ class Route
             return static::$app[$id];
         }
         if (isset(static::$router['__#named#__'][$url])) {
-            $str = static::$router['__#named#__'][$url];
+            $namedRoutes = static::$router['__#named#__'][$url];
+            $str = null;
+
+            // 如果是数组，说明有多个同名路由
+            if (is_array($namedRoutes)) {
+                // 智能选择路由：如果有参数，优先选择带参数的路由；如果没有参数，选择不带参数的路由
+                foreach ($namedRoutes as $route) {
+                    preg_match_all($this->match, $route, $tempOut);
+                    $hasParams = !empty($tempOut[1]);
+
+                    if (empty($par) && !$hasParams) {
+                        // 没有参数且路由不需要参数
+                        $str = $route;
+                        break;
+                    } elseif (!empty($par) && $hasParams) {
+                        // 有参数且路由需要参数
+                        $str = $route;
+                        break;
+                    }
+                }
+                // 如果没有找到完全匹配的，使用第一个
+                if (!$str) {
+                    $str = $namedRoutes[0];
+                }
+            } else {
+                // 只有一个路由，直接使用
+                $str = $namedRoutes;
+            }
+
             preg_match_all($this->match, $str, $out);
             $first = $out[0];
             $sec = $out[1];
