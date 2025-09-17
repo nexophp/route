@@ -444,23 +444,36 @@ class Route
 
             // 如果是数组，说明有多个同名路由
             if (is_array($namedRoutes)) {
-                // 智能选择路由：如果有参数，优先选择带参数的路由；如果没有参数，选择不带参数的路由
+                // 智能选择路由：根据参数名称精确匹配路由
+                $bestMatch = null;
+                $bestScore = -1;
+                
                 foreach ($namedRoutes as $route) {
                     preg_match_all($this->match, $route, $tempOut);
-                    $hasParams = !empty($tempOut[1]);
-
-                    if (empty($par) && !$hasParams) {
-                        // 没有参数且路由不需要参数
+                    $routeParams = $tempOut[1] ?? [];
+                    
+                    if (empty($par) && empty($routeParams)) {
+                        // 没有参数且路由不需要参数 - 完美匹配
                         $str = $route;
                         break;
-                    } elseif (!empty($par) && $hasParams) {
-                        // 有参数且路由需要参数
-                        $str = $route;
-                        break;
+                    } elseif (!empty($par) && !empty($routeParams)) {
+                        // 计算参数匹配度
+                        $matchedParams = array_intersect(array_keys($par), $routeParams);
+                        $score = count($matchedParams);
+                        
+                        // 如果所有传入的参数都能匹配到路由参数，且匹配度更高
+                        if ($score > 0 && $score == count($par) && $score > $bestScore) {
+                            $bestMatch = $route;
+                            $bestScore = $score;
+                        }
                     }
                 }
-                // 如果没有找到完全匹配的，使用第一个
-                if (!$str) {
+                
+                // 使用最佳匹配的路由
+                if ($bestMatch) {
+                    $str = $bestMatch;
+                } elseif (!$str) {
+                    // 如果没有找到完全匹配的，使用第一个
                     $str = $namedRoutes[0];
                 }
             } else {
