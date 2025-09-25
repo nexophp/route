@@ -433,6 +433,7 @@ class Route
      */
     protected function createUrl($url, $par = [])
     {
+        global $app;
         $url = str_replace('.', '/', $url);
         $id = 'route_url' . $url . json_encode($par);
         if (isset(static::$app[$id]) && static::$app[$id]) {
@@ -447,11 +448,11 @@ class Route
                 // 智能选择路由：根据参数名称精确匹配路由
                 $bestMatch = null;
                 $bestScore = -1;
-                
+
                 foreach ($namedRoutes as $route) {
                     preg_match_all($this->match, $route, $tempOut);
                     $routeParams = $tempOut[1] ?? [];
-                    
+
                     if (empty($par) && empty($routeParams)) {
                         // 没有参数且路由不需要参数 - 完美匹配
                         $str = $route;
@@ -460,7 +461,7 @@ class Route
                         // 计算参数匹配度
                         $matchedParams = array_intersect(array_keys($par), $routeParams);
                         $score = count($matchedParams);
-                        
+
                         // 如果所有传入的参数都能匹配到路由参数，且匹配度更高
                         if ($score > 0 && $score == count($par) && $score > $bestScore) {
                             $bestMatch = $route;
@@ -468,7 +469,7 @@ class Route
                         }
                     }
                 }
-                
+
                 // 使用最佳匹配的路由
                 if ($bestMatch) {
                     $str = $bestMatch;
@@ -519,8 +520,8 @@ class Route
         $lang = self::getActions()['lang'] ?? '';
         if ($lang) {
             $url = '/' . $lang . $url;
-        } else if (function_exists('cookie')) {
-            $lang = cookie('lang');
+        } else {
+            $lang = $app['lang'] ?? '';
             if ($lang) {
                 $url = '/' . $lang . $url;
             }
