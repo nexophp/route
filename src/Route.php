@@ -518,14 +518,15 @@ class Route
         $url = $this->base_url . $str;
         $url = str_replace("//", '/', $url);
         $lang = self::getActions()['lang'] ?? '';
-        if ($lang) {
-            $url = '/' . $lang . $url;
-        } else {
-            $lang = $app['lang'] ?? '';
+        $default_lang = $app['lang'] ?? '';
+        if ($default_lang) {
             if ($lang) {
                 $url = '/' . $lang . $url;
+            } else {
+                $url = '/' . $default_lang . $url;
             }
         }
+
         static::$app[$id] = $url;
         return $url;
     }
